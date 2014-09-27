@@ -24,6 +24,7 @@ import GAnalytics;
 */
 class PlayState extends FlxState
 {
+	public static inline var BUTTON_DELAY:Float = 1.0;
 	private static inline var BAT_SPEED:Int = 350;
 	
 	public var _bat:FlxSprite;
@@ -49,6 +50,8 @@ class PlayState extends FlxState
 	public var batoffset:Int;
 	public var batminx:Int;
 	public var batmaxx:Int;
+	
+	public var _cooldown:Float;
 	
 	override public function create():Void
 	{
@@ -182,6 +185,8 @@ class PlayState extends FlxState
 			_bat.velocity.x =0;//stop moving if key released on virtualpad
 		}
 		
+		_cooldown += FlxG.elapsed;
+		
 		if (PlayState.virtualPad.buttonB.status == FlxButton.PRESSED)
 		{
 			batgrow();
@@ -260,7 +265,7 @@ class PlayState extends FlxState
 		ball--;//decrease ballcounter
 		_ball.x=batmid;
 		_ball.y=210;//10 above batmid
-		velocitydefault-=50;
+		if(velocitydefault>100){velocitydefault-=50};
 		_ball.velocity.y = velocitydefault;//slow down
 		//TODO ball.exists = false;
 	}
@@ -275,13 +280,16 @@ class PlayState extends FlxState
 	
 	private function updateHud():Void
 	{
-		if(ball==1){		trace("1 ball");
+		if(ball==1){		
+		//trace("1 ball");
 			_hudball.text=Std.string(ball)+" Ball remaining "+Std.string(score)+" Score";
 			}
-		else if(ball>1){	trace("more than 1 ball");
+		else if(ball>1){	
+		//trace("more than 1 ball");
 			_hudball.text=Std.string(ball)+" Balls remaining "+Std.string(score)+" Score";
 			}
-		else{	trace("empty ball");
+		else{	
+		//trace("empty ball");
 			gameover();
 			GAnalytics.trackEvent("Game", "emptyball", Std.string(score), 1);
 	
@@ -290,29 +298,56 @@ class PlayState extends FlxState
 
 	private function batgrow():Void
 	{	
+	if((_cooldown> BUTTON_DELAY)&&_bat.width<99)
+		{
 		trace("batgrow part 1");
-		var ratio:Float=(_bat.width+20)/_bat.width;
+		var width:Int=Std.int(_bat.width); //scale collision detection
+		
+		var ratio:Float=(width+20)/width;
 		//fancy math code
 		
 		trace("ok here some batgrow thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
 		//default is 40x6 px so we increase by 20?
 		//TODO if bat.x to near wall make a bit left or right
 		
-		_bat.scale.set(ratio, 1); //scale graphic
-		_bat.width +=20; //scale collision detection
+		width +=20; //scale collision detection
+		_bat.makeGraphic(width, 6, FlxColor.HOT_PINK);
+		//_bat.scale.set(ratio, 1); //scale graphic
+		
+		//_bat.width +=20; //scale collision detection
+		//only when we use scale instead of makegraphic
 
 		//bat.resize.grow-or-like
 		batmaxx -=20;//TODO check?
-		batminx +=20;//TODO check?
+		batminx +=0;//TODO check?
 		batoffset += 10; //TODO check ? but should work
 		trace("ok here some batgrow thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
+		_cooldown=0;
+		}
+	
 	}
 	
 	private function balladd():Void
 	{
+		if(_cooldown> BUTTON_DELAY)
+		{
 		trace("balladd");
 		ball++;
 		trace ("ballcount="+ball);
+		_cooldown=0;
+		}
+		
+	}
+	
+	private function randomPower():Void
+	{
+		if(_cooldown> BUTTON_DELAY)
+		{
+		trace("balladd");
+		ball++;
+		trace ("ballcount="+ball);
+		_cooldown=0;
+		}
 		
 	}
 }
