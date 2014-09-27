@@ -7,6 +7,7 @@ import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.util.FlxRandom;
+import flixel.ui.FlxVirtualPad;
 
 /**
 * Atari 2600 Breakout
@@ -28,6 +29,8 @@ class PlayState extends FlxState
 	private var _bottomWall:FlxSprite;
 	
 	private var _bricks:FlxGroup;
+	
+	public static var virtualPad:FlxVirtualPad;
 	
 	override public function create():Void
 	{
@@ -92,6 +95,9 @@ class PlayState extends FlxState
 		add(_bat);
 		add(_ball);
 		add(_bricks);
+		virtualPad = new FlxVirtualPad(LEFT_RIGHT, A);
+		virtualPad.setAll("alpha", 0.5);
+		add(virtualPad);	 //add last  = foreground
 	}
 	
 	override public function update():Void
@@ -123,6 +129,11 @@ class PlayState extends FlxState
 		}
 		#end
 		
+		//
+		//
+		//
+		//	_left = FlxG.keys.anyPressed(["LEFT", "A"])  || MenuState.virtualPad.buttonLeft.status == FlxButton.PRESSED;
+		//_right = FlxG.keys.anyPressed(["RIGHT", "D"]) || MenuState.virtualPad.buttonA.status == FlxButton.PRESSED;	
 		if (FlxG.keys.anyPressed(["LEFT", "A"]) && _bat.x > 10)
 		{
 			_bat.velocity.x = - BAT_SPEED;
