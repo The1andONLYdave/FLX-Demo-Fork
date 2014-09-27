@@ -11,6 +11,8 @@ import flixel.ui.FlxButton;
 import flixel.ui.FlxVirtualPad;
 import flixel.text.FlxText;
 import flixel.util.FlxStringUtil;
+//import admob.AD;
+import GAnalytics;
 /**
 * Atari 2600 Breakout
 * 
@@ -24,7 +26,7 @@ class PlayState extends FlxState
 {
 	private static inline var BAT_SPEED:Int = 350;
 	
-	private var _bat:FlxSprite;
+	public var _bat:FlxSprite;
 	private var _ball:FlxSprite;
 	
 	private var _walls:FlxGroup;
@@ -40,11 +42,22 @@ class PlayState extends FlxState
 	public static var virtualPad:FlxVirtualPad;
 	
 	private var score:Int;
-	private var ball:Int;
+	public var ball:Int;
 	private var _hudball:FlxText;  
+	
+	public var velocitydefault:Int;
+	public var batoffset:Int;
+	public var batminx:Int;
+	public var batmaxx:Int;
 	
 	override public function create():Void
 	{
+			//ad.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
+		GAnalytics.startSession( "UA-47310419-9" );
+		GAnalytics.trackScreen( "90363841" );
+		GAnalytics.trackEvent("Game", "action", "starting", 1);
+		//ad.show();
+		
 		FlxG.mouse.visible = false;
 		
 		_bat = new FlxSprite(180, 220);
@@ -117,13 +130,16 @@ class PlayState extends FlxState
 		add(_hudball);		
 	
 
-		virtualPad = new FlxVirtualPad(LEFT_RIGHT, A);
+		virtualPad = new FlxVirtualPad(LEFT_RIGHT, A_B_C);
 		virtualPad.setAll("alpha", 0.5);
 		add(virtualPad);	 //add last  = foreground
 		
 		score=0; //TODO add something like oldscore=score for making red if lower and green (in _hudball) if score>oldscore. but how do we transfer in gameover() to playstate, but on first run we need to initialize it with a value in onCreate
 		ball=3;//just in case
-		
+		batoffset=0;
+		velocitydefault=200;//decrease on every floor contact
+		batminx=10;
+		batmaxx=270;
 		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
 	
 	}
@@ -138,14 +154,8 @@ class PlayState extends FlxState
 
 		#if !FLX_NO_TOUCH
 		// Simple routine to move bat to x position of touch
-		for (touch in FlxG.touches.list)
-		{
-			if (touch.pressed)
-			{
-				if (touch.x > 10 && touch.x < 270)
-				_bat.x = touch.x;
-			}
-		}
+		//removed they are in same area as buttonleft and buttonright
+		
 		// Vertical long swipe up or down resets game state
 		for (swipe in FlxG.swipes)
 		{
@@ -159,11 +169,11 @@ class PlayState extends FlxState
 		}
 		#end
 		
-		if ((FlxG.keys.anyPressed(["LEFT", "A"])  || PlayState.virtualPad.buttonLeft.status == FlxButton.PRESSED )&& _bat.x > 10)
+		if ((FlxG.keys.anyPressed(["LEFT", "A"])  || PlayState.virtualPad.buttonLeft.status == FlxButton.PRESSED )&& _bat.x > batminx)
 		{
 			_bat.velocity.x = - BAT_SPEED;
 		}
-		else if ((FlxG.keys.anyPressed(["RIGHT", "D"]) || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED || PlayState.virtualPad.buttonRight.status == FlxButton.PRESSED)&& _bat.x < 270)
+		else if ((FlxG.keys.anyPressed(["RIGHT", "D"]) || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED || PlayState.virtualPad.buttonRight.status == FlxButton.PRESSED)&& _bat.x < batmaxx)
 		{
 			_bat.velocity.x = BAT_SPEED;
 		}
@@ -172,19 +182,31 @@ class PlayState extends FlxState
 			_bat.velocity.x =0;//stop moving if key released on virtualpad
 		}
 		
+		if (PlayState.virtualPad.buttonB.status == FlxButton.PRESSED)
+		{
+			batgrow();
+			GAnalytics.trackEvent("Game", "debug", "batgrow", 1);
+		}
+		if (PlayState.virtualPad.buttonC.status == FlxButton.PRESSED)
+		{
+			balladd();
+			GAnalytics.trackEvent("Game", "debug", "balladd", 1);
+		}
+		
 		if (FlxG.keys.justReleased.R) //TODO map it to onscreen button or something on android, or move into pausemenu on press of overlaybutton or back-key(@override in .java file with template?)
 		{
 			FlxG.resetState();
+			GAnalytics.trackEvent("Game", "resetstate", "starting", 1);
 		}
 		
-		if (_bat.x < 10)
+		if (_bat.x < batminx )
 		{
-			_bat.x = 10;
+			_bat.x = batminx ;
 		}
 		
-		if (_bat.x > 270)
+		if (_bat.x > batmaxx )
 		{
-			_bat.x = 270;
+			_bat.x = batmaxx ;
 		}
 		
 		FlxG.collide(_ball, _walls);
@@ -198,13 +220,13 @@ class PlayState extends FlxState
 		trace("score increase");
 		Brick.exists = false;
 		score++;
-		FlxG.sound.play("assets/sfx/_brickdestroy", 1, false);	//123
-		Ball.velocity.y += 10; //beginn with 200 and increase on every block collision
+		FlxG.sound.play("assets/sfx/_brickdestroy.wav", 1, false);	//123
+	//	Ball.velocity.y += 1; //beginn with 200 and increase on every block collision
 	}
 	
 	private function ping(Bat:FlxObject, Ball:FlxObject):Void
 	{
-		var batmid:Int = Std.int(Bat.x) + 20;
+		var batmid:Int = Std.int(Bat.x) + 20 + batoffset;
 		var ballmid:Int = Std.int(Ball.x) + 3;
 		var diff:Int;
 		
@@ -231,14 +253,15 @@ class PlayState extends FlxState
 	private function floor(Ball:FlxObject, Floor:FlxObject):Void
 	{
 		trace("floor");
-		var batmid:Int = Std.int(Bat.x) + 20;
+		var batmid:Int = Std.int(_bat.x) + 20 + batoffset;
 		trace ("batmid="+batmid);
 		//TODO make screen shake/flicker 
 		//FlxG.camera.flash(0xff000000, 1);
 		ball--;//decrease ballcounter
 		_ball.x=batmid;
 		_ball.y=210;//10 above batmid
-		_ball.velocity.y = 200;//slow down
+		velocitydefault-=50;
+		_ball.velocity.y = velocitydefault;//slow down
 		//TODO ball.exists = false;
 	}
 	
@@ -260,6 +283,36 @@ class PlayState extends FlxState
 			}
 		else{	trace("empty ball");
 			gameover();
+			GAnalytics.trackEvent("Game", "emptyball", Std.string(score), 1);
+	
 		}
+	}
+
+	private function batgrow():Void
+	{	
+		trace("batgrow part 1");
+		var ratio:Float=(_bat.width+20)/_bat.width;
+		//fancy math code
+		
+		trace("ok here some batgrow thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
+		//default is 40x6 px so we increase by 20?
+		//TODO if bat.x to near wall make a bit left or right
+		
+		_bat.scale.set(ratio, 1); //scale graphic
+		_bat.width +=20; //scale collision detection
+
+		//bat.resize.grow-or-like
+		batmaxx -=20;//TODO check?
+		batminx +=20;//TODO check?
+		batoffset += 10; //TODO check ? but should work
+		trace("ok here some batgrow thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
+	}
+	
+	private function balladd():Void
+	{
+		trace("balladd");
+		ball++;
+		trace ("ballcount="+ball);
+		
 	}
 }

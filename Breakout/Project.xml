@@ -41,8 +41,8 @@
 	<!--haxelib name="flixel-ui"/-->
 	
 	<!--In case you want to use nape with flixel-->
-	<!--haxelib name="nape" /-->
-	
+	<!--haxelib name="nape" /-->		
+	<haxelib name="ganalytics" if="android"/>
 	<!--------------------------------HAXEDEFINES----------------------------------->
 	
 	<!--Enable the Flixel core recording system-->
