@@ -408,8 +408,13 @@ class PlayState extends FlxState
 		{
 		trace("randomPower");
 			var x:Int = FlxRandom.intRanged(0, 7);
-			var run:String = _powerarray[x]+"()";
-			run;//that is WTF coding, kids dont try at home
+			var run:String = _powerarray[x]+"()";//get functionname as string from array and add ()
+		//	run;//that is WTF coding, kids dont try at home
+			 
+		//	_powerarray[x]();//python style
+		
+		Reflect.field(this,_powerarray[x])();
+		
 		trace ("randomPower="+_powerarray[x]);
 		_cooldown=0;
 		}
