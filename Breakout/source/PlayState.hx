@@ -25,8 +25,11 @@ import GAnalytics;
 class PlayState extends FlxState
 {
 	public static inline var BUTTON_DELAY:Float = 1.0;
+	public static inline var POWERUP_DENSITY:Float = 2.5;
+
 	private static inline var BAT_SPEED:Int = 350;
-	
+	public static  var _powerarray : Array<String> = ["batgrow","batshrink","balladd","speedUp","speedDown","gun","burning","doubleball"];
+		
 	public var _bat:FlxSprite;
 	private var _ball:FlxSprite;
 	
@@ -226,6 +229,7 @@ class PlayState extends FlxState
 		Brick.exists = false;
 		score++;
 		FlxG.sound.play("assets/sfx/_brickdestroy.wav", 1, false);	//123
+		randomPower();//because take itself care of fglx timer for powerups density  we call it every brick collision
 	//	Ball.velocity.y += 1; //beginn with 200 and increase on every block collision
 	}
 	
@@ -265,8 +269,7 @@ class PlayState extends FlxState
 		ball--;//decrease ballcounter
 		_ball.x=batmid;
 		_ball.y=210;//10 above batmid
-		if(velocitydefault>100){velocitydefault-=50};
-		_ball.velocity.y = velocitydefault;//slow down
+		speedDown();
 		//TODO ball.exists = false;
 	}
 	
@@ -298,54 +301,116 @@ class PlayState extends FlxState
 
 	private function batgrow():Void
 	{	
-	if((_cooldown> BUTTON_DELAY)&&_bat.width<99)
-		{
+	//if((_cooldown> BUTTON_DELAY)&&_bat.width<99)
+	if(_bat.width<99)
+	{
 		trace("batgrow part 1");
 		var width:Int=Std.int(_bat.width); //scale collision detection
-		
 		var ratio:Float=(width+20)/width;
 		//fancy math code
-		
 		trace("ok here some batgrow thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
 		//default is 40x6 px so we increase by 20?
 		//TODO if bat.x to near wall make a bit left or right
-		
 		width +=20; //scale collision detection
 		_bat.makeGraphic(width, 6, FlxColor.HOT_PINK);
 		//_bat.scale.set(ratio, 1); //scale graphic
-		
 		//_bat.width +=20; //scale collision detection
 		//only when we use scale instead of makegraphic
-
-		//bat.resize.grow-or-like
 		batmaxx -=20;//TODO check?
 		batminx +=0;//TODO check?
 		batoffset += 10; //TODO check ? but should work
+		//_cooldown=0;
 		trace("ok here some batgrow thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
-		_cooldown=0;
 		}
-	
+	}
+
+	private function batshrink():Void
+	{	
+	//if((_cooldown> BUTTON_DELAY)&&_bat.width<99)
+	if(_bat.width>39)
+	{
+		trace("batshrink part 1");
+		var width:Int=Std.int(_bat.width); //scale collision detection
+		var ratio:Float=(width-20)/width;
+		//fancy math code
+		trace("ok here some batshrink thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
+		//default is 40x6 px so we increase by 20?
+		//TODO if bat.x to near wall make a bit left or right
+		width -=20; //scale collision detection
+		_bat.makeGraphic(width, 6, FlxColor.HOT_PINK);
+		//_bat.scale.set(ratio, 1); //scale graphic
+		//_bat.width +=20; //scale collision detection
+		//only when we use scale instead of makegraphic
+		batmaxx +=20;//TODO check?
+		batminx -=0;//TODO check?
+		batoffset -= 10; //TODO check ? but should work
+		//_cooldown=0;
+		trace("ok here some batshrink thing(ratio,bat.width, batmaxx, batminx, batoffset)"+ratio+"\t"+_bat.width+"\t"+batmaxx+"\t"+batminx+"\t"+batoffset);
+		}
 	}
 	
 	private function balladd():Void
 	{
-		if(_cooldown> BUTTON_DELAY)
-		{
+		//if(_cooldown> BUTTON_DELAY)
+		//{
 		trace("balladd");
 		ball++;
 		trace ("ballcount="+ball);
-		_cooldown=0;
-		}
-		
+		//_cooldown=0;
+		//}
 	}
 	
+	private function speedUp():Void
+	{
+		//if(_cooldown> BUTTON_DELAY)
+		//{
+		trace("speedUp");
+		if(velocitydefault<250){velocitydefault+=50;};
+		_ball.velocity.y = velocitydefault;//speed up
+		trace ("velicity.y="+_ball.velocity.y);
+		//_cooldown=0;
+		//}
+	}	
+
+	private function speedDown():Void
+	{
+		//if(_cooldown> BUTTON_DELAY)
+		//{
+		trace("speedDown");
+		if(velocitydefault>100){velocitydefault-=50;};
+		_ball.velocity.y = velocitydefault;//speed up
+		trace ("velicity.y="+_ball.velocity.y);
+		//_cooldown=0;
+		//}
+	}	
+
+	private function gun():Void
+	{
+		trace("gun");
+		trace ("emptyfunction"+_ball.velocity.y);
+	}		
+	
+	private function burning():Void
+	{
+		trace("burning");
+		trace ("emptyfunction"+_ball.velocity.y);
+	}		
+
+	private function doubleball():Void
+	{
+		trace("doubleball");
+		trace ("emptyfunction"+_ball.velocity.y);
+	}		
+
 	private function randomPower():Void
 	{
-		if(_cooldown> BUTTON_DELAY)
+		if(_cooldown> POWERUP_DENSITY)
 		{
-		trace("balladd");
-		ball++;
-		trace ("ballcount="+ball);
+		trace("randomPower");
+			var x:Int = FlxRandom.intRanged(0, 7);
+			var run:String = _powerarray[x]+"()";
+			run;//that is WTF coding, kids dont try at home
+		trace ("randomPower="+_powerarray[x]);
 		_cooldown=0;
 		}
 		
