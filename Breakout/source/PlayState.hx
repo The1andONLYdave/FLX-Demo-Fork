@@ -61,7 +61,15 @@ class PlayState extends FlxState
 	
 	public var _cooldown:Float;
 	
+	public var pauseButton:FlxButton;
 	public var pause:Bool;
+	public var velocitypx:Float;
+	public var velocitypy:Float;
+	
+	public var soundButton:FlxButton;	
+	public var musicButton:FlxButton;
+	public var testButton:FlxButton;
+	
 	override public function create():Void
 	{
 			//ad.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
@@ -145,10 +153,21 @@ class PlayState extends FlxState
 		add(_bricks);
 		add(_bricksPowerUp);
 		add(_floor);
+				pauseButton =  new FlxButton(FlxG.width - 100, 107, "Pause", pauseMode);
+		add(pauseButton);
+			testButton =  new FlxButton(130, 107, "Debug", testMode);
+			testButton.visible=false;
+		add(testButton);
+			musicButton =  new FlxButton(150, 137, "Music on/off", musicMode);
+			musicButton.visible=false;
+		add(musicButton);
+			soundButton =  new FlxButton(170, 167, "Sound on/off", soundMode);
+			soundButton.visible=false;
+		add(soundButton);
 		
 		// HUD - score and ball count
 		_hudball = new FlxText(0, 0, FlxG.width);
-		_hudball.setFormat(null, 16, FlxColor.YELLOW, "center", FlxText.BORDER_OUTLINE, 0x131c1b);
+		_hudball.setFormat(null, 16, FlxColor.YELLOW, "left", FlxText.BORDER_OUTLINE, 0x131c1b);
 		_hudball.scrollFactor.set(0, 0);
 		add(_hudball);		
 		
@@ -175,6 +194,7 @@ class PlayState extends FlxState
 		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
 	
 		pause=false;
+
 	}
 	
 	override public function update():Void
@@ -183,9 +203,9 @@ class PlayState extends FlxState
 		
 		_bat.velocity.x = 0;
 		
-		updateHud();
+		if(!pause){updateHud();}
 
-		#if !FLX_NO_TOUCH
+/* 		#if !FLX_NO_TOUCH
 		// Simple routine to move bat to x position of touch
 		//removed they are in same area as buttonleft and buttonright
 		
@@ -201,7 +221,7 @@ class PlayState extends FlxState
 				}
 			}
 		}
-		#end
+		#end */
 	
 	if (FlxG.keys.justReleased.R) //TODO map it to onscreen button or something on android, or move into pausemenu on press of overlaybutton or back-key(@override in .java file with template?)
 		{
@@ -314,11 +334,11 @@ if(!pause){
 	{
 		if(ball==1){		
 		//trace("1 ball");
-			_hudball.text=Std.string(ball)+" Ball remaining "+Std.string(score)+" Score";
+			_hudball.text=Std.string(ball)+" Ball remaining \n"+Std.string(score)+" Score";
 			}
 		else if(ball>1){	
 		//trace("more than 1 ball");
-			_hudball.text=Std.string(ball)+" Balls remaining "+Std.string(score)+" Score";
+			_hudball.text=Std.string(ball)+" Balls remaining \n"+Std.string(score)+" Score";
 			}
 		else{	
 		//trace("empty ball");
@@ -466,13 +486,20 @@ if(!pause){
 	
 	private function pauseMenu():Void
 	{
+		pause=true;
 		trace("pauseMenu");
 		FlxG.sound.volume=0;
-		_hudpower.text="Pause, \n slide down to resume gaming";
+		velocitypy=_ball.velocity.y;
+		velocitypx=_ball.velocity.x;
+		_hudball.text="Pause, \n press again to continue\ncur speed: x "+velocitypx+" y "+velocitypy;
 		GAnalytics.trackEvent("Game", "pauseMenu", "called", 1);
 		_ball.velocity.x=0;
 		_ball.velocity.y=0;
 		_bat.velocity.x=0;
+		testButton.visible=true;
+		musicButton.visible=true;
+		soundButton.visible=true;
+		
 	}
 	private function onResume():Void
 	{
@@ -480,9 +507,14 @@ if(!pause){
 		FlxG.sound.volume=1;
 		_hudpower.text="";
 		GAnalytics.trackEvent("Game", "onResume", "called", 1);
-		_ball.velocity.x=velocitydefault;
-		_ball.velocity.y=velocitydefault;
+		_ball.velocity.x=velocitypx;
+		_ball.velocity.y=velocitypy;
 		_cooldown=0;//before too often randomPower after pauseMenu
+		pause=false;
+		testButton.visible=false;
+		musicButton.visible=false;
+		soundButton.visible=false;
+		
 	}
 	private function pauseMode():Void
 	{
@@ -495,7 +527,20 @@ if(!pause){
 				onResume();
 			}
 	}
-
-
-		
+		private function testMode():Void
+	{
+		trace("pauseMode");
+		GAnalytics.trackEvent("Game", "testMode", "starting", 1);
+	}
+		private function musicMode():Void
+	{
+		trace("pauseMode");
+		GAnalytics.trackEvent("Game", "musicMode", "starting", 1);
+	}
+		private function soundMode():Void
+	{
+		trace("pauseMode");
+		GAnalytics.trackEvent("Game", "soundMode", "starting", 1);
+	}
+	
 }
