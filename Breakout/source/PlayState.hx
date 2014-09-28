@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.FlxSubState;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.util.FlxRandom;
@@ -60,6 +61,7 @@ class PlayState extends FlxState
 	
 	public var _cooldown:Float;
 	
+	public var pause:Bool;
 	override public function create():Void
 	{
 			//ad.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
@@ -172,6 +174,7 @@ class PlayState extends FlxState
 		batmaxx=270;
 		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
 	
+		pause=false;
 	}
 	
 	override public function update():Void
@@ -193,12 +196,26 @@ class PlayState extends FlxState
 			{
 				if ((swipe.angle < 10 && swipe.angle > -10) || (swipe.angle > 170 || swipe.angle < -170))
 				{
-					FlxG.resetState();
+					//FlxG.resetState();
+						pauseMode();
 				}
 			}
 		}
 		#end
+	
+	if (FlxG.keys.justReleased.R) //TODO map it to onscreen button or something on android, or move into pausemenu on press of overlaybutton or back-key(@override in .java file with template?)
+		{
+			FlxG.resetState();
+			GAnalytics.trackEvent("Game", "resetstate", "starting", 1);
+		}
 		
+		if (FlxG.keys.justPressed("ESCAPE") || FlxG.keys.justPressed("P"))
+		{
+			//this.setSubState(new PauseMenu(), onMenuClosed);
+			pauseMode();
+		}
+	
+if(!pause){	
 		if ((FlxG.keys.anyPressed(["LEFT", "A"])  || PlayState.virtualPad.buttonLeft.status == FlxButton.PRESSED )&& _bat.x > batminx)
 		{
 			_bat.velocity.x = - BAT_SPEED;
@@ -211,26 +228,10 @@ class PlayState extends FlxState
 		{	//TODO:do we need a if flxbutton.release for left, right and A-Button here too?
 			_bat.velocity.x =0;//stop moving if key released on virtualpad
 		}
-		
+}			
 		_cooldown += FlxG.elapsed;
-		
-	/* 	if (PlayState.virtualPad.buttonB.status == FlxButton.PRESSED)
-		{
-			batgrow();
-			GAnalytics.trackEvent("Game", "debug", "batgrow", 1);
-		}
-		if (PlayState.virtualPad.buttonC.status == FlxButton.PRESSED)
-		{
-			balladd();
-			GAnalytics.trackEvent("Game", "debug", "balladd", 1);
-		} */
-		
-		if (FlxG.keys.justReleased.R) //TODO map it to onscreen button or something on android, or move into pausemenu on press of overlaybutton or back-key(@override in .java file with template?)
-		{
-			FlxG.resetState();
-			GAnalytics.trackEvent("Game", "resetstate", "starting", 1);
-		}
-		
+	
+
 		if (_bat.x < batminx )
 		{
 			_bat.x = batminx ;
@@ -304,7 +305,9 @@ class PlayState extends FlxState
 		trace("gameover");
 		//TODO make screen shake/flicker FlxG.camera.flash(0xff000000, 1);
 		ball=3;//for next turn
-		FlxG.switchState(new PlayState()); //TODO check if working or do we need something like state(current_state) like in unity 3d?
+		FlxG.switchState(new PlayState()); //TODO check if working or do we need something like state(current_state) like in unity 3d?			
+			FlxG.resetState();
+
 	}
 	
 	private function updateHud():Void
@@ -459,9 +462,40 @@ class PlayState extends FlxState
 		
 		trace ("powerUp="+_powerarray[x]);
 		_cooldown=0;//for avoiding randomPower if you collect powerUp
-		
-		
-		
-	
 	}
+	
+	private function pauseMenu():Void
+	{
+		trace("pauseMenu");
+		FlxG.sound.volume(0);
+		_hudpower.text="Pause, \n slide down to resume gaming";
+		GAnalytics.trackEvent("Game", "pauseMenu", "called", 1);
+		_ball.velocity.x=0;
+		_ball.velocity.y=0;
+		_bat.velocity.x=0;
+	}
+	private function onResume():Void
+	{
+		trace("onResume");
+		FlxG.sound.volume(1);
+		_hudpower.text="";
+		GAnalytics.trackEvent("Game", "onResume", "called", 1);
+		_ball.velocity.x=velocitydefault;
+		_ball.velocity.y=velocitydefault;
+		_cooldown=0;//before too often randomPower after pauseMenu
+	}
+	private function pauseMode():Void
+	{
+		trace("pauseMode");
+		GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
+			if(!pause){
+				pauseMenu();
+			}
+			else{
+				onResume();
+			}
+	}
+
+
+		
 }
