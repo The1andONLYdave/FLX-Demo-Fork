@@ -25,11 +25,13 @@ import GAnalytics;
 class PlayState extends FlxState
 {
 	public static inline var BUTTON_DELAY:Float = 1.0;
-	public static inline var POWERUP_DENSITY:Float = 2.5;
+	public static inline var POWERUP_DENSITY:Float = 5.5;
+	public static inline var POWERUP_HUD:Float = 2.5;
 
 	private static inline var BAT_SPEED:Int = 350;
 	public static  var _powerarray : Array<String> = ["batgrow","batshrink","balladd","speedUp","speedDown","gun","burning","doubleball"];
-		
+	
+	public static  var _powerarrayhud : Array<String> = ["Bigger Paddle","Smaller Paddle","Extra Ball","Faster","Slowdown","Gunner Ready","On Fire","Double Fun"];
 	public var _bat:FlxSprite;
 	private var _ball:FlxSprite;
 	
@@ -48,6 +50,7 @@ class PlayState extends FlxState
 	private var score:Int;
 	public var ball:Int;
 	private var _hudball:FlxText;  
+	private var _hudpower:FlxText;  
 	
 	public var velocitydefault:Int;
 	public var batoffset:Int;
@@ -134,9 +137,18 @@ class PlayState extends FlxState
 		_hudball.setFormat(null, 16, FlxColor.YELLOW, "center", FlxText.BORDER_OUTLINE, 0x131c1b);
 		_hudball.scrollFactor.set(0, 0);
 		add(_hudball);		
+		
+		//PowerUp - HUD
+		_hudpower = new FlxText(0, 100, FlxG.width);
+		_hudpower.setFormat(null, 16, FlxColor.YELLOW, "center", FlxText.BORDER_OUTLINE, 0x131c1b);
+		_hudpower.scrollFactor.set(0, 0);
+		add(_hudpower);	
+		
+	//	_hudpower.setVisible=false;
 	
 
-		virtualPad = new FlxVirtualPad(LEFT_RIGHT, A_B_C);
+		//virtualPad = new FlxVirtualPad(LEFT_RIGHT, A_B_C);
+		virtualPad = new FlxVirtualPad(LEFT_RIGHT, A);
 		virtualPad.setAll("alpha", 0.5);
 		add(virtualPad);	 //add last  = foreground
 		
@@ -190,7 +202,7 @@ class PlayState extends FlxState
 		
 		_cooldown += FlxG.elapsed;
 		
-		if (PlayState.virtualPad.buttonB.status == FlxButton.PRESSED)
+	/* 	if (PlayState.virtualPad.buttonB.status == FlxButton.PRESSED)
 		{
 			batgrow();
 			GAnalytics.trackEvent("Game", "debug", "batgrow", 1);
@@ -199,7 +211,7 @@ class PlayState extends FlxState
 		{
 			balladd();
 			GAnalytics.trackEvent("Game", "debug", "balladd", 1);
-		}
+		} */
 		
 		if (FlxG.keys.justReleased.R) //TODO map it to onscreen button or something on android, or move into pausemenu on press of overlaybutton or back-key(@override in .java file with template?)
 		{
@@ -270,7 +282,7 @@ class PlayState extends FlxState
 		_ball.x=batmid;
 		_ball.y=210;//10 above batmid
 		speedDown();
-		//TODO ball.exists = false;
+		FlxG.sound.play("assets/sfx/_brickdestroy.wav", 1, false);	//123
 	}
 	
 	private function gameover():Void
@@ -295,8 +307,9 @@ class PlayState extends FlxState
 		//trace("empty ball");
 			gameover();
 			GAnalytics.trackEvent("Game", "emptyball", Std.string(score), 1);
-	
 		}
+		
+		if(_cooldown>POWERUP_HUD){_hudpower.text="";}
 	}
 
 	private function batgrow():Void
@@ -305,6 +318,7 @@ class PlayState extends FlxState
 	if(_bat.width<99)
 	{
 		trace("batgrow part 1");
+		FlxG.sound.play("assets/sfx/_mechanical.wav", 1, false);	//123
 		var width:Int=Std.int(_bat.width); //scale collision detection
 		var ratio:Float=(width+20)/width;
 		//fancy math code
@@ -330,6 +344,7 @@ class PlayState extends FlxState
 	if(_bat.width>39)
 	{
 		trace("batshrink part 1");
+		FlxG.sound.play("assets/sfx/_mechanical.wav", 1, false);	//123
 		var width:Int=Std.int(_bat.width); //scale collision detection
 		var ratio:Float=(width-20)/width;
 		//fancy math code
@@ -351,37 +366,25 @@ class PlayState extends FlxState
 	
 	private function balladd():Void
 	{
-		//if(_cooldown> BUTTON_DELAY)
-		//{
 		trace("balladd");
 		ball++;
 		trace ("ballcount="+ball);
-		//_cooldown=0;
-		//}
 	}
 	
 	private function speedUp():Void
 	{
-		//if(_cooldown> BUTTON_DELAY)
-		//{
 		trace("speedUp");
 		if(velocitydefault<250){velocitydefault+=50;};
 		_ball.velocity.y = velocitydefault;//speed up
 		trace ("velicity.y="+_ball.velocity.y);
-		//_cooldown=0;
-		//}
-	}	
+	}
 
 	private function speedDown():Void
 	{
-		//if(_cooldown> BUTTON_DELAY)
-		//{
 		trace("speedDown");
 		if(velocitydefault>100){velocitydefault-=50;};
 		_ball.velocity.y = velocitydefault;//speed up
 		trace ("velicity.y="+_ball.velocity.y);
-		//_cooldown=0;
-		//}
 	}	
 
 	private function gun():Void
@@ -414,6 +417,9 @@ class PlayState extends FlxState
 		//	_powerarray[x]();//python style
 		
 		Reflect.field(this,_powerarray[x])();
+		
+		_hudpower.text=_powerarrayhud[x];
+		GAnalytics.trackEvent("Game", "randomPower", _powerarray[x], 1);
 		
 		trace ("randomPower="+_powerarray[x]);
 		_cooldown=0;
