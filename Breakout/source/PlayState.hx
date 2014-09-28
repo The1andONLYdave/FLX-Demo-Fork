@@ -25,7 +25,7 @@ import GAnalytics;
 class PlayState extends FlxState
 {
 	public static inline var BUTTON_DELAY:Float = 1.0;
-	public static inline var POWERUP_DENSITY:Float = 5.5;
+	public static inline var POWERUP_DENSITY:Float = 10.0;//every 10 sec if no powerup collected
 	public static inline var POWERUP_HUD:Float = 2.5;
 
 	private static inline var BAT_SPEED:Int = 350;
@@ -45,6 +45,7 @@ class PlayState extends FlxState
 	
 	private var _bricks:FlxGroup;
 	
+	private var _bricksPowerUp:FlxGroup;
 	public static var virtualPad:FlxVirtualPad;
 	
 	private var score:Int;
@@ -105,6 +106,7 @@ class PlayState extends FlxState
 		
 		// Some bricks
 		_bricks = new FlxGroup();
+		_bricksPowerUp = new FlxGroup();
 		
 		var bx:Int = 10;
 		var by:Int = 30;
@@ -119,13 +121,16 @@ class PlayState extends FlxState
 				var tempBrick:FlxSprite = new FlxSprite(bx, by);
 				if(a==7) {
 					tempBrick.makeGraphic(15, 15, 0xffBBAAFF);
+					tempBrick.immovable = true;
+				_bricksPowerUp.add(tempBrick);
+				bx += 15;
 				}
 				else{
 					tempBrick.makeGraphic(15, 15, brickColours[y]);
-				}
-				tempBrick.immovable = true;
+					tempBrick.immovable = true;
 				_bricks.add(tempBrick);
 				bx += 15;
+				}
 			}
 			
 			bx = 10;
@@ -136,6 +141,7 @@ class PlayState extends FlxState
 		add(_bat);
 		add(_ball);
 		add(_bricks);
+		add(_bricksPowerUp);
 		add(_floor);
 		
 		// HUD - score and ball count
@@ -239,6 +245,8 @@ class PlayState extends FlxState
 		FlxG.collide(_bat, _ball, ping);
 		FlxG.collide(_ball, _bricks, hit);
 		FlxG.collide(_ball, _floor, floor);	
+		FlxG.collide(_ball, _bricksPowerUp, powerUp);
+		
 	}
 	
 	private function hit(Ball:FlxObject, Brick:FlxObject):Void
@@ -382,6 +390,7 @@ class PlayState extends FlxState
 		trace("speedUp");
 		if(velocitydefault<250){velocitydefault+=50;};
 		_ball.velocity.y = velocitydefault;//speed up
+		_ball.velocity.x = velocitydefault;//speed up
 		trace ("velicity.y="+_ball.velocity.y);
 	}
 
@@ -390,6 +399,7 @@ class PlayState extends FlxState
 		trace("speedDown");
 		if(velocitydefault>100){velocitydefault-=50;};
 		_ball.velocity.y = velocitydefault;//speed up
+		_ball.velocity.x = velocitydefault;//speed up
 		trace ("velicity.y="+_ball.velocity.y);
 	}	
 
@@ -431,5 +441,27 @@ class PlayState extends FlxState
 		_cooldown=0;
 		}
 		
+	}
+	private function powerUp(Ball:FlxObject, PowerUp:FlxObject):Void
+	{
+		trace("score increase");
+		PowerUp.exists = false;
+		score++;
+		FlxG.sound.play("assets/sfx/_brickdestroy.wav", 1, false);	//123
+	
+		trace("powerUp");
+			var x:Int = FlxRandom.intRanged(0, 7);
+			
+		Reflect.field(this,_powerarray[x])();
+		
+		_hudpower.text=_powerarrayhud[x];
+		GAnalytics.trackEvent("Game", "powerUp", _powerarray[x], 1);
+		
+		trace ("powerUp="+_powerarray[x]);
+		_cooldown=0;//for avoiding randomPower if you collect powerUp
+		
+		
+		
+	
 	}
 }
