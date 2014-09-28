@@ -14,6 +14,10 @@ import flixel.text.FlxText;
 import flixel.util.FlxStringUtil;
 //import admob.AD;
 import GAnalytics;
+
+import flixel.plugin.photonstorm.FX.BlurFX;
+import flixel.plugin.photonstorm.*;
+
 /**
 * Atari 2600 Breakout
 * 
@@ -70,6 +74,13 @@ class PlayState extends FlxState
 	public var musicButton:FlxButton;
 	public var testButton:FlxButton;
 	
+	// Test specific variables
+private var blur:BlurFX;
+private var blurEffect:FlxSprite;
+private var ball:FlxSprite;
+private var timer:FlxDelay;
+
+	
 	override public function create():Void
 	{
 			//ad.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
@@ -77,9 +88,13 @@ class PlayState extends FlxState
 		GAnalytics.trackScreen( "90363841" );
 		GAnalytics.trackEvent("Game", "action", "starting", 1);
 		//ad.show();
-		
+	
 		FlxG.mouse.visible = false;
-		
+	//		if (FlxG.getPlugin(FlxSpecialFX) == null)
+	//	{
+		//	FlxG.addPlugin(new FlxSpecialFX);
+	//	}
+
 		_bat = new FlxSprite(180, 220);
 		_bat.makeGraphic(40, 6, FlxColor.HOT_PINK);
 		_bat.immovable = true;
@@ -149,7 +164,19 @@ class PlayState extends FlxState
 		
 		add(_walls);
 		add(_bat);
-		add(_ball);
+// The plugin
+blur = FlxSpecialFX.blur();
+blurEffect = blur.create(320, 240, 1, 1, 1);
+blur.addSprite(_ball);
+add(blurEffect);
+add(_ball);
+blur.start(2);
+
+// Just a timer to change the ball color every few seconds
+timer = new FlxDelay(2000);
+timer.start();
+
+
 		add(_bricks);
 		add(_bricksPowerUp);
 		add(_floor);
@@ -248,6 +275,15 @@ if(!pause){
 		{	//TODO:do we need a if flxbutton.release for left, right and A-Button here too?
 			_bat.velocity.x =0;//stop moving if key released on virtualpad
 		}
+if (timer.hasExpired)
+{
+ball.frame++;
+if (ball.frame == ball.frames)
+{
+ball.frame = 1;
+}
+timer.start();
+}
 }			
 		_cooldown += FlxG.elapsed;
 	
@@ -270,6 +306,13 @@ if(!pause){
 		
 	}
 	
+	override public function destroy():Void
+{
+// Important! Clear out the plugin, otherwise resources will get messed right up after a while
+FlxSpecialFX.clear();
+super.destroy();
+}
+
 	private function hit(Ball:FlxObject, Brick:FlxObject):Void
 	{
 		trace("score increase");
