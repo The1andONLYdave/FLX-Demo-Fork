@@ -209,7 +209,7 @@ class PlayState extends FlxState
 			GAnalytics.trackEvent("Game", "resetstate", "starting", 1);
 		}
 		
-		if (FlxG.keys.justPressed("ESCAPE") || FlxG.keys.justPressed("P"))
+		if (FlxG.keys.anyPressed(["ESCAPE","P"]))
 		{
 			//this.setSubState(new PauseMenu(), onMenuClosed);
 			pauseMode();
@@ -467,7 +467,7 @@ if(!pause){
 	private function pauseMenu():Void
 	{
 		trace("pauseMenu");
-		FlxG.sound.volume(0);
+		FlxG.sound.volume=0;
 		_hudpower.text="Pause, \n slide down to resume gaming";
 		GAnalytics.trackEvent("Game", "pauseMenu", "called", 1);
 		_ball.velocity.x=0;
@@ -477,7 +477,7 @@ if(!pause){
 	private function onResume():Void
 	{
 		trace("onResume");
-		FlxG.sound.volume(1);
+		FlxG.sound.volume=1;
 		_hudpower.text="";
 		GAnalytics.trackEvent("Game", "onResume", "called", 1);
 		_ball.velocity.x=velocitydefault;
