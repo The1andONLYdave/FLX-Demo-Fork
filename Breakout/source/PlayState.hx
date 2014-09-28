@@ -115,8 +115,14 @@ class PlayState extends FlxState
 		{
 			for (x in 0...20)
 			{
+				var a:Int = FlxRandom.intRanged(0, 10);
 				var tempBrick:FlxSprite = new FlxSprite(bx, by);
-				tempBrick.makeGraphic(15, 15, brickColours[y]);
+				if(a==7) {
+					tempBrick.makeGraphic(15, 15, 0xffBBAAFF);
+				}
+				else{
+					tempBrick.makeGraphic(15, 15, brickColours[y]);
+				}
 				tempBrick.immovable = true;
 				_bricks.add(tempBrick);
 				bx += 15;
