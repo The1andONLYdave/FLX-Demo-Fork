@@ -1,0 +1,11 @@
+here goes planned features, known bugs, and pseudocode hand-in-hand
+
+implement pause on app close/minimize
+music and sound on/off separately
+add more debug menu thing(maybe use admob device id to show debug-button only on developer devices)
+better location/size/whatever for pause button
+better scaling(wtf is the bottomwall on a nexus4?
+icon
+"Gunner Ready","On Fire","Double Fun" implement: gunner is gun on middle or sides of _bat, double fun are instant start of second ball (from _ball.x and .y with diff velocity OR from _bat (when _ball activate double fun, it isn't on paddle so they behave differently, random x on _bat collider make good work too)
+and on fire makes ball burning (maybe for beginning just change _ball.color to #FF5500 or some flickering between colors? and make no position change on collide with _brick or _powerUp, only with bat, wall,... 
+timer for on fire and gunner ready and maybe for too small paddle (minsize=startTimer(), onTimerFinish=_bat.width(default))

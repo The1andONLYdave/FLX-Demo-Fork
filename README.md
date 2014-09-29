@@ -2,6 +2,9 @@ FLX-Demo-Fork
 =============
 For the Play Link scroll down
 
+Breakout/download apk
+Breakout/organizational/PLANNED.txt please check too
+
 fork of 2 demos from haxeflixel... first commit for more planned features, MIT license, google play available shortly also.
 
 try to fork flxteroids and breakout for adding android support like
@@ -16,6 +19,6 @@ try to maintain compatibility with other build targets, but mainly android
 Free Flxteroids
 https://play.google.com/store/apps/details?id=com.dlka.flxteroidsDemo
 
-Paid Breakout (50 cent)
+Paid Breakout (50 cent)(Free too now)
 https://play.google.com/store/apps/details?id=com.dlka.breakoutFlxDemo
 (free apk is in download folder)
