@@ -124,7 +124,7 @@ class PlayState extends FlxState
 		_floor = new FlxGroup();
 		_floor.add(_bottomWall);
 		
-		_trail = new FlxTrail(_ball, "noimage",10,2,0.4,0.05);
+		_trail = new FlxTrail(_ball,10,2,0.4,0.05);
 		// Some bricks
 		_bricks = new FlxGroup();
 		_bricksPowerUp = new FlxGroup();
