@@ -13,6 +13,7 @@ import flixel.ui.FlxVirtualPad;
 import flixel.text.FlxText;
 import flixel.util.FlxStringUtil;
 import admob.AD;
+import admob.AD2;
 import GAnalytics;
 
 import flixel.addons.effects.FlxTrail;
@@ -78,7 +79,10 @@ class PlayState extends FlxState
 	
 	override public function create():Void
 	{
-		AD.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.TOP, AD.BANNER_LANDSCAPE, true);
+		AD2.init("ca-app-pub-8761501900041217/8010544486", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
+		AD.init("ca-app-pub-8761501900041217/1964010885", AD.CENTER, AD.TOP, AD.BANNER_LANDSCAPE, true);
+		//for creating interstitial add when balls<=0
+		//ca-app-pub-8761501900041217/3440744089
 		GAnalytics.startSession( "UA-47310419-9" );
 		GAnalytics.trackScreen( "90363841" );
 		GAnalytics.trackEvent("Game", "action", "starting", 1);
@@ -124,7 +128,7 @@ class PlayState extends FlxState
 		_floor = new FlxGroup();
 		_floor.add(_bottomWall);
 		
-		_trail = new FlxTrail(_ball,10,2,0.4,0.05);
+	//	_trail = new FlxTrail(_ball,10,2,0.4,0.05);
 		// Change the image of all trailsprites
 //trail.changeGraphic(newImage);
 // Increase the length of the trail by 5 sprites
@@ -165,7 +169,7 @@ class PlayState extends FlxState
 		add(_walls);
 		add(_bat);
 
-		add(_trail);
+		//add(_trail);
 		add(_ball);
 
 
@@ -215,6 +219,7 @@ class PlayState extends FlxState
 	
 		pause=false;
 		AD.hide();
+		AD2.show();
 	}
 	
 	override public function update():Void
@@ -524,6 +529,7 @@ super.destroy();
 		testButton.visible=true;
 		musicButton.visible=true;
 		soundButton.visible=true;
+		AD2.hide();
 		AD.show();
 		
 	}
@@ -541,6 +547,7 @@ super.destroy();
 		musicButton.visible=false;
 		soundButton.visible=false;
 		AD.hide();
+		AD2.show();
 	}
 	private function pauseMode():Void
 	{
