@@ -12,12 +12,12 @@ import flixel.ui.FlxButton;
 import flixel.ui.FlxVirtualPad;
 import flixel.text.FlxText;
 import flixel.util.FlxStringUtil;
-//import admob.AD;
+import admob.AD;
 import GAnalytics;
 
-import flixel.plugin.photonstorm.FX.BlurFX;
-import flixel.plugin.photonstorm.*;
-
+import flixel.addons.effects.FlxTrail;
+//import org.flixel.plugin.photonstorm.*;
+//import org.flixel.plugin.photonstorm.FX.BlurFX;
 /**
 * Atari 2600 Breakout
 * 
@@ -74,20 +74,15 @@ class PlayState extends FlxState
 	public var musicButton:FlxButton;
 	public var testButton:FlxButton;
 	
-	// Test specific variables
-private var blur:BlurFX;
-private var blurEffect:FlxSprite;
-private var ball:FlxSprite;
-private var timer:FlxDelay;
-
+	public  var _trail:FlxTrail;
 	
 	override public function create():Void
 	{
-			//ad.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
+		AD.init("ca-app-pub-8761501900041217/8764631680", AD.CENTER, AD.TOP, AD.BANNER_LANDSCAPE, true);
 		GAnalytics.startSession( "UA-47310419-9" );
 		GAnalytics.trackScreen( "90363841" );
 		GAnalytics.trackEvent("Game", "action", "starting", 1);
-		//ad.show();
+		AD.show();
 	
 		FlxG.mouse.visible = false;
 	//		if (FlxG.getPlugin(FlxSpecialFX) == null)
@@ -129,6 +124,7 @@ private var timer:FlxDelay;
 		_floor = new FlxGroup();
 		_floor.add(_bottomWall);
 		
+		_trail = new FlxTrail(_ball, "noimage",10,2,0.4,0.05);
 		// Some bricks
 		_bricks = new FlxGroup();
 		_bricksPowerUp = new FlxGroup();
@@ -164,17 +160,10 @@ private var timer:FlxDelay;
 		
 		add(_walls);
 		add(_bat);
-// The plugin
-blur = FlxSpecialFX.blur();
-blurEffect = blur.create(320, 240, 1, 1, 1);
-blur.addSprite(_ball);
-add(blurEffect);
-add(_ball);
-blur.start(2);
 
-// Just a timer to change the ball color every few seconds
-timer = new FlxDelay(2000);
-timer.start();
+		add(_trail);
+		add(_ball);
+
 
 
 		add(_bricks);
@@ -221,7 +210,7 @@ timer.start();
 		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
 	
 		pause=false;
-
+		AD.hide();
 	}
 	
 	override public function update():Void
@@ -275,15 +264,6 @@ if(!pause){
 		{	//TODO:do we need a if flxbutton.release for left, right and A-Button here too?
 			_bat.velocity.x =0;//stop moving if key released on virtualpad
 		}
-if (timer.hasExpired)
-{
-ball.frame++;
-if (ball.frame == ball.frames)
-{
-ball.frame = 1;
-}
-timer.start();
-}
 }			
 		_cooldown += FlxG.elapsed;
 	
@@ -308,8 +288,6 @@ timer.start();
 	
 	override public function destroy():Void
 {
-// Important! Clear out the plugin, otherwise resources will get messed right up after a while
-FlxSpecialFX.clear();
 super.destroy();
 }
 
@@ -542,6 +520,7 @@ super.destroy();
 		testButton.visible=true;
 		musicButton.visible=true;
 		soundButton.visible=true;
+		AD.show();
 		
 	}
 	private function onResume():Void
@@ -557,7 +536,7 @@ super.destroy();
 		testButton.visible=false;
 		musicButton.visible=false;
 		soundButton.visible=false;
-		
+		AD.hide();
 	}
 	private function pauseMode():Void
 	{

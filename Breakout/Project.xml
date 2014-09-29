@@ -2,7 +2,7 @@
 <project>
 	<!------------------------------APPLICATION SETTINGS---------------------------->
 	
-	<app title="Breakout" file="Breakout" main="Main" version="0.0.2" company="DLK appentwicklung"  package="com.dlka.breakoutFlxDemo"/>
+	<app title="Breakout" file="Breakout" main="Main" version="0.0.3" company="DLK appentwicklung"  package="com.dlka.breakoutFlxDemo"/>
 	
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 	<!--or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"!-->
@@ -35,15 +35,16 @@
 	<haxelib name="flixel"/>
 	
 	<!--In case you want to use the addons package-->
-	<!--haxelib name="flixel-addons" /-->
+	<haxelib name="flixel-addons"/>
 	
 	<!--In case you want to use the ui package-->
 	<!--haxelib name="flixel-ui"/-->
-	<haxelib name="flixel-power-tools"/>
+	<!--<haxelib name="flixel-power-tools"/>-->
 	
 	<!--In case you want to use nape with flixel-->
 	<!--haxelib name="nape" /-->		
 	<haxelib name="ganalytics" if="android"/>
+		<haxelib name="admob" if="android"/>
 	<!--------------------------------HAXEDEFINES----------------------------------->
 	
 	<!--Enable the Flixel core recording system-->
@@ -82,4 +83,9 @@
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 	
  <android target-sdk-version="19" minimum-sdk-version="14" if="android" />
+ 
+	<java path="android-template/libs/google-play-services.jar" if="android" />
+<template path="android-template/AndroidManifest.xml" rename="AndroidManifest.xml" if="android" />
+<template path="android-template/src/org/haxe/lime/GameActivity.java" rename="src/org/haxe/lime/GameActivity.java" if="android" />
+
 </project>
