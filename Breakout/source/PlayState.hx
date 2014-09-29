@@ -125,6 +125,10 @@ class PlayState extends FlxState
 		_floor.add(_bottomWall);
 		
 		_trail = new FlxTrail(_ball,10,2,0.4,0.05);
+		// Change the image of all trailsprites
+//trail.changeGraphic(newImage);
+// Increase the length of the trail by 5 sprites
+//trail.increaseLength(5);
 		// Some bricks
 		_bricks = new FlxGroup();
 		_bricksPowerUp = new FlxGroup();
