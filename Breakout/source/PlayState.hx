@@ -517,7 +517,8 @@ super.destroy();
 	{
 		pause=true;
 		trace("pauseMenu");
-		FlxG.sound.volume=0;
+		//TODO bool for music and sound, onResume too
+		//FlxG.sound.volume=0; 
 		velocitypy=_ball.velocity.y;
 		velocitypx=_ball.velocity.x;
 		_hudball.text="Pause, \n press again to continue\ncur speed: x "+velocitypx+" y "+velocitypy;
@@ -534,7 +535,7 @@ super.destroy();
 	private function onResume():Void
 	{
 		trace("onResume");
-		FlxG.sound.volume=1;
+		//FlxG.sound.volume=1;
 		_hudpower.text="";
 		GAnalytics.trackEvent("Game", "onResume", "called", 1);
 		_ball.velocity.x=velocitypx;
@@ -567,11 +568,11 @@ super.destroy();
 	{
 		trace("pauseMode");
 		GAnalytics.trackEvent("Game", "musicMode", "starting", 1);
-		if(FlxG.sound.volume==0;){
+		if(FlxG.sound.volume==0){
 			FlxG.sound.volume=1;
 		}
 		else{
-			FlxG.sound.volume=1;
+			FlxG.sound.volume=0;
 			//TODO only music
 		}
 	}
@@ -579,11 +580,11 @@ super.destroy();
 	{
 		trace("pauseMode");
 		GAnalytics.trackEvent("Game", "soundMode", "starting", 1);
-			if(FlxG.sound.volume==0;){
+			if(FlxG.sound.volume==0){
 			FlxG.sound.volume=1;
 		}
 		else{
-			FlxG.sound.volume=1;
+			FlxG.sound.volume=0;
 			//TODO only music
 		}
 	}
