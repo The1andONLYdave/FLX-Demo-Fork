@@ -217,7 +217,7 @@ class PlayState extends FlxState
 		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
 	
 		pause=false;
-		AD.hide();
+		
 		//AD2.show();
 	}
 	
