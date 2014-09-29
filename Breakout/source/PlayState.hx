@@ -13,7 +13,6 @@ import flixel.ui.FlxVirtualPad;
 import flixel.text.FlxText;
 import flixel.util.FlxStringUtil;
 import admob.AD;
-import admob.AD2;
 import GAnalytics;
 
 import flixel.addons.effects.FlxTrail;
@@ -79,7 +78,7 @@ class PlayState extends FlxState
 	
 	override public function create():Void
 	{
-		AD2.init("ca-app-pub-8761501900041217/8010544486", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
+		//AD2.init("ca-app-pub-8761501900041217/8010544486", AD.CENTER, AD.BOTTOM, AD.BANNER_LANDSCAPE, true);
 		AD.init("ca-app-pub-8761501900041217/1964010885", AD.CENTER, AD.TOP, AD.BANNER_LANDSCAPE, true);
 		//for creating interstitial add when balls<=0
 		//ca-app-pub-8761501900041217/3440744089
@@ -219,7 +218,7 @@ class PlayState extends FlxState
 	
 		pause=false;
 		AD.hide();
-		AD2.show();
+		//AD2.show();
 	}
 	
 	override public function update():Void
@@ -529,8 +528,7 @@ super.destroy();
 		testButton.visible=true;
 		musicButton.visible=true;
 		soundButton.visible=true;
-		AD2.hide();
-		AD.show();
+		//AD2.hide();
 		
 	}
 	private function onResume():Void
@@ -546,8 +544,7 @@ super.destroy();
 		testButton.visible=false;
 		musicButton.visible=false;
 		soundButton.visible=false;
-		AD.hide();
-		AD2.show();
+		//AD2.show();
 	}
 	private function pauseMode():Void
 	{
@@ -564,16 +561,31 @@ super.destroy();
 	{
 		trace("pauseMode");
 		GAnalytics.trackEvent("Game", "testMode", "starting", 1);
+		AD.hide();
 	}
 		private function musicMode():Void
 	{
 		trace("pauseMode");
 		GAnalytics.trackEvent("Game", "musicMode", "starting", 1);
+		if(FlxG.sound.volume==0;){
+			FlxG.sound.volume=1;
+		}
+		else{
+			FlxG.sound.volume=1;
+			//TODO only music
+		}
 	}
 		private function soundMode():Void
 	{
 		trace("pauseMode");
 		GAnalytics.trackEvent("Game", "soundMode", "starting", 1);
+			if(FlxG.sound.volume==0;){
+			FlxG.sound.volume=1;
+		}
+		else{
+			FlxG.sound.volume=1;
+			//TODO only music
+		}
 	}
 	
 }
