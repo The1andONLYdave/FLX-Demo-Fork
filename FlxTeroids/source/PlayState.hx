@@ -11,6 +11,10 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
+import flixel.ui.FlxVirtualPad;
+import flixel.ui.FlxButton;
+import flixel.util.FlxColor;
+import flixel.util.FlxRandom;
 
 /**
  * ...
@@ -25,6 +29,11 @@ class PlayState extends FlxState
 	private var _scoreText:FlxText;
 	
 	private var _score:Int = 0;
+	
+	public static var virtualPad:FlxVirtualPad;
+	public var pauseButton:FlxButton;
+	public var pause:Bool;
+
 	
 	override public function create():Void 
 	{
@@ -63,7 +72,7 @@ class PlayState extends FlxState
 			sprite.height = 10;
 			sprite.offset.set( -1, -4);
 			sprite.exists = false;
-			
+			sprite.color =0xffff9024;
 			bullets.add(sprite);
 		}
 		
@@ -73,6 +82,18 @@ class PlayState extends FlxState
 		add(_scoreText);
 		
 		add(bullets);
+		
+		pauseButton =  new FlxButton((FlxG.width /2)-20 , FlxG.height-15, "Pause", pauseMode);
+		add(pauseButton);
+
+		virtualPad = new FlxVirtualPad(FULL, A);
+		virtualPad.setAll("alpha", 0.5);
+		add(virtualPad);	 //add last  = foreground
+
+		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
+	
+		pause=false;		
+
 	}
 	
 	override public function destroy():Void
@@ -97,7 +118,7 @@ class PlayState extends FlxState
 		// Don't continue in case we lost
 		if (!_playerShip.alive)
 		{
-			if (FlxG.keys.pressed.R)
+			if (FlxG.keys.pressed.R || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED || FlxG.mouse.justPressed)
 			{
 				FlxG.resetState();
 			}
@@ -116,7 +137,7 @@ class PlayState extends FlxState
 				FlxSpriteUtil.screenWrap(bullet);
 			}
 		}
-	}
+}
 	
 	private function increaseScore(Amount:Int = 10):Void
 	{
@@ -138,7 +159,7 @@ class PlayState extends FlxState
 		Object1.kill();
 		Object2.kill();
 		bullets.kill();
-		_scoreText.text = "Game Over! Final score: " + _score + " - Press R to retry.";
+		_scoreText.text = "Game Over! Final score: " + _score + " - Click Screen to retry.";
 	}
 	
 	private function resetTimer(Timer:FlxTimer):Void
@@ -149,7 +170,40 @@ class PlayState extends FlxState
 	
 	private function spawnAsteroid():Void
 	{
+	
+	var brickColours:Array<Int> = [0xffd03ad1, 0xfff75352, 0xfffd8014, 0xffff9024, 0xff05b320, 0xff6d65f6];
+	//var a:Int = FlxRandom.intRanged(0, 5);
 		var asteroid:Asteroid = asteroids.recycle(Asteroid);
 		asteroid.init();
+		}
+	
+	
+
+private function pauseMenu():Void
+	{
+		pause=true;
+		trace("pauseMenu");
+		//TODO bool for music and sound, onResume too
+		FlxG.sound.volume=0; 
+		//GAnalytics.trackEvent("Game", "pauseMenu", "called", 1);
 	}
+	private function onResume():Void
+	{
+		trace("onResume");
+		FlxG.sound.volume=1;
+		//GAnalytics.trackEvent("Game", "onResume", "called", 1);
+		pause=false;
+	}
+	private function pauseMode():Void
+	{
+		trace("pauseMode");
+		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
+			if(!pause){
+				pauseMenu();
+			}
+			else{
+				onResume();
+			}
+	}
+		
 }

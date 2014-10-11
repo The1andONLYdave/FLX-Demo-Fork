@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxAngle;
 import flixel.util.FlxSpriteUtil;
-
+import flixel.ui.FlxButton;
 /**
  * ...
  * @author Zaphod
@@ -32,24 +32,24 @@ class PlayerShip extends FlxSprite
 	{
 		angularVelocity = 0;
 		
-		if (FlxG.keys.anyPressed(["A", "LEFT"]))
+		if (FlxG.keys.anyPressed(["A", "LEFT"])  || PlayState.virtualPad.buttonLeft.status == FlxButton.PRESSED)
 		{
 			angularVelocity -= 240;
 		}
 		
-		if (FlxG.keys.anyPressed(["D", "RIGHT"]))
+		if (FlxG.keys.anyPressed(["D", "RIGHT"]) || PlayState.virtualPad.buttonRight.status == FlxButton.PRESSED)
 		{
 			angularVelocity += 240;
 		}
 		
 		acceleration.set();
 		
-		if (FlxG.keys.anyPressed(["W", "UP"]))
+		if (FlxG.keys.anyPressed(["W", "UP"]) || PlayState.virtualPad.buttonUp.status == FlxButton.PRESSED)
 		{
 			FlxAngle.rotatePoint(90, 0, 0, 0, angle, acceleration);
 		}
 		
-		if (FlxG.keys.justPressed.SPACE)
+		if (FlxG.keys.justPressed.SPACE || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED)
 		{
 			var bullet:FlxSprite = PlayState.bullets.recycle();
 			bullet.reset(x + (width - bullet.width) / 2, y + (height - bullet.height) / 2);
@@ -57,6 +57,7 @@ class PlayerShip extends FlxSprite
 			FlxAngle.rotatePoint(150, 0, 0, 0, bullet.angle, bullet.velocity);
 			bullet.velocity.x *= 2;
 			bullet.velocity.y *= 2;
+			FlxG.sound.play("assets/sfx/_gun.wav", 1, false);	//123
 		}
 		
 		FlxSpriteUtil.screenWrap(this);
