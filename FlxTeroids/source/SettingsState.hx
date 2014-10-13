@@ -10,7 +10,7 @@ import flixel.ui.FlxButton;
  * ...
  * @author Zaphod
  */
-class MenuState extends FlxState
+class SettingsState extends FlxState
 {
 public var DemoButton1:FlxButton;
 public var DemoButton2:FlxButton;
@@ -32,11 +32,11 @@ public var DemoButton3:FlxButton;
 		t.setFormat(null, 16, FlxColor.WHITE, "center", FlxText.BORDER_OUTLINE);
 		add(t);
 		
-		DemoButton1 =  new FlxButton((FlxG.width /2)-30 , (FlxG.height/4)*3, "Options", openOptions);
+		DemoButton1 =  new FlxButton((FlxG.width /2)-30 , (FlxG.height/4)*3, "Sound on/off", toggleSound);
 		add(DemoButton1);
-		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Play", closeMenu);
+		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Back", closeMenu);
 		add(DemoButton2);
-		DemoButton3 =  new FlxButton(((FlxG.width /4)*1 )-30, FlxG.height/2, "Exit", closeGame);
+		DemoButton3 =  new FlxButton(((FlxG.width /4)*1 )-30, FlxG.height/2, "Toggle Music", toggleMusic);
 		add(DemoButton3);
 		
 		
@@ -46,23 +46,23 @@ public var DemoButton3:FlxButton;
 		
 	}
 	
-	private function openOptions():Void
+	private function toggleSound():Void
 	{
-		trace("openOptions");
+		trace("toggleSound");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		FlxG.switchState(new SettingsState());
+
 	}
 		private function closeMenu():Void
 	{
 		trace("closeMenu");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		FlxG.switchState(new PlayState());
+		FlxG.switchState(new MenuState());
 	}
-		private function closeGame():Void
+		private function toggleMusic():Void
 	{
-		trace("closeGame");
+		trace(toggleMusic);
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		//FlxG.fade();
+	
 	}
 	
 }

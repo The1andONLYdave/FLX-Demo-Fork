@@ -1,5 +1,6 @@
 package;
 
+
 import flixel.addons.display.FlxStarField.FlxStarField3D;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -10,8 +11,9 @@ import flixel.ui.FlxButton;
  * ...
  * @author Zaphod
  */
-class MenuState extends FlxState
+class DebugState extends FlxState
 {
+
 public var DemoButton1:FlxButton;
 public var DemoButton2:FlxButton;
 public var DemoButton3:FlxButton;
@@ -32,11 +34,11 @@ public var DemoButton3:FlxButton;
 		t.setFormat(null, 16, FlxColor.WHITE, "center", FlxText.BORDER_OUTLINE);
 		add(t);
 		
-		DemoButton1 =  new FlxButton((FlxG.width /2)-30 , (FlxG.height/4)*3, "Options", openOptions);
+		DemoButton1 =  new FlxButton((FlxG.width /2)-30 , (FlxG.height/4)*3, "Demo1", closeDebug);
 		add(DemoButton1);
-		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Play", closeMenu);
+		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Demo2", closeDebug);
 		add(DemoButton2);
-		DemoButton3 =  new FlxButton(((FlxG.width /4)*1 )-30, FlxG.height/2, "Exit", closeGame);
+		DemoButton3 =  new FlxButton(((FlxG.width /4)*1 )-30, FlxG.height/2, "Demo3", closeDebug);
 		add(DemoButton3);
 		
 		
@@ -46,23 +48,11 @@ public var DemoButton3:FlxButton;
 		
 	}
 	
-	private function openOptions():Void
+	private function closeDebug():Void
 	{
-		trace("openOptions");
-		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		FlxG.switchState(new SettingsState());
-	}
-		private function closeMenu():Void
-	{
-		trace("closeMenu");
+		trace("closeDebug");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
 		FlxG.switchState(new PlayState());
-	}
-		private function closeGame():Void
-	{
-		trace("closeGame");
-		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		//FlxG.fade();
 	}
 	
 }

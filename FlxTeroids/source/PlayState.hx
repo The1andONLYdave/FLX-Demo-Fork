@@ -1,6 +1,8 @@
 package;
 
 import flixel.addons.display.FlxStarField.FlxStarField2D;
+import flixel.addons.effects.FlxTrail;
+
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -56,6 +58,8 @@ class PlayState extends FlxState
 		
 		// Create the player ship
 		_playerShip = new PlayerShip();
+		var trail:FlxTrail = new FlxTrail(_playerShip);
+		add(trail);
 		add(_playerShip);
 		
 		// There'll only ever be 32 bullets that we recycle over and over
@@ -186,6 +190,7 @@ private function pauseMenu():Void
 		//TODO bool for music and sound, onResume too
 		FlxG.sound.volume=0; 
 		//GAnalytics.trackEvent("Game", "pauseMenu", "called", 1);
+		openDebug();
 	}
 	private function onResume():Void
 	{
@@ -204,6 +209,12 @@ private function pauseMenu():Void
 			else{
 				onResume();
 			}
+	}
+		private function openDebug():Void
+	{
+		trace("openDebug");
+		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
+		FlxG.switchState(new DebugState());
 	}
 		
 }
