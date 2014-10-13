@@ -22,3 +22,6 @@ https://play.google.com/store/apps/details?id=com.dlka.flxteroidsDemo
 Paid Breakout (50 cent)(Free too now)
 https://play.google.com/store/apps/details?id=com.dlka.breakoutFlxDemo
 (free apk is in download folder)
+
+
+Building current FlxTeroids needs FlxTrail.hx from project folder in haxelib/flixel-addons...

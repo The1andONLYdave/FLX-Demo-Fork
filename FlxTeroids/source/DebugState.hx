@@ -36,9 +36,9 @@ public var DemoButton3:FlxButton;
 		
 		DemoButton1 =  new FlxButton((FlxG.width /2)-30 , (FlxG.height/4)*3, "Demo1", closeDebug);
 		add(DemoButton1);
-		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Demo2", closeDebug);
+		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Demo2", closeDebug2);
 		add(DemoButton2);
-		DemoButton3 =  new FlxButton(((FlxG.width /4)*1 )-30, FlxG.height/2, "Demo3", closeDebug);
+		DemoButton3 =  new FlxButton(((FlxG.width /4)*1 )-30, FlxG.height/2, "Demo3", closeDebug3);
 		add(DemoButton3);
 		
 		
@@ -53,6 +53,18 @@ public var DemoButton3:FlxButton;
 		trace("closeDebug");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
 		FlxG.switchState(new PlayState());
+	}
+		private function closeDebug2():Void
+	{
+		trace("closeDebug2");
+		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
+		FlxG.switchState(new PlayState2());
+	}
+		private function closeDebug3():Void
+	{
+		trace("closeDebug3");
+		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
+		FlxG.switchState(new PlayState3());
 	}
 	
 }
