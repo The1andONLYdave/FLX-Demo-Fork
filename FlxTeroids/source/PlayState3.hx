@@ -122,7 +122,7 @@ class PlayState3 extends FlxState
 		// Don't continue in case we lost
 		if (!_playerShip.alive)
 		{
-			if (FlxG.keys.pressed.R || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED || FlxG.mouse.justPressed)
+			if (FlxG.keys.pressed.R || PlayState3.virtualPad.buttonA.status == FlxButton.PRESSED || FlxG.mouse.justPressed)
 			{
 				FlxG.resetState();
 			}
@@ -130,8 +130,8 @@ class PlayState3 extends FlxState
 			return;
 		}
 		
-		FlxG.overlap(bullets, asteroids, bulletHitsAsteroid);
-		FlxG.overlap(asteroids, _playerShip, asteroidHitsShip);
+	//	FlxG.overlap(bullets, asteroids, bulletHitsAsteroid);
+	//	FlxG.overlap(asteroids, _playerShip, asteroidHitsShip);
 		FlxG.collide(asteroids);
 		
 		for (bullet in bullets.members)
