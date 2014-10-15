@@ -235,7 +235,8 @@ class PlayState extends FlxState
 	private function increaseScore(Amount:Int = 10):Void
 	{
 		_score += Amount;
-		_scoreText.text = "Score: " + _score+" Level "+Std,string(Reg.level+1)+" at "+Std.string((300*reg.level)-_score)+" more. new gun at "+Std.string((500-_score))+" more";
+		if(_score<500){_scoreText.text = "Score: " + _score+"\nLevel "+Std.string(Reg.level+1)+" at "+Std.string((300*Reg.level)-_score)+" more\nnew gun at "+Std.string(500-_score)+" more";}
+		else{_scoreText.text = "Score: " + _score+"\nLevel "+Std.string(Reg.level+1)+" at "+Std.string((300*Reg.level)-_score);}
 		_scoreText.alpha = 0;
 		FlxTween.tween(_scoreText, { alpha: 1 }, 0.5);
 	}
