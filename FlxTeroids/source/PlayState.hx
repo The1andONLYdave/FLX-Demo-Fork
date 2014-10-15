@@ -17,10 +17,11 @@ import flixel.ui.FlxVirtualPad;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.util.FlxRandom;
+import flixel.group.FlxGroup;
 
 /**
  * ...
- * @author Zaphod
+ * @author Zaphod, modified D.-L. Kulsch
  */
 class PlayState extends FlxState
 {
@@ -36,13 +37,54 @@ class PlayState extends FlxState
 	public var pauseButton:FlxButton;
 	public var pause:Bool;
 
+	public static var colorArray:Array<Dynamic>;
+	private var _pos:FlxText;
+	private var _health:FlxText;
+	private var _walls:FlxGroup;
+	private var _leftWall:FlxSprite;
+	private var _rightWall:FlxSprite;
+	private var _topWall:FlxSprite;
+	private var _bottomWall:FlxSprite;
+
 	
 	override public function create():Void 
 	{
 		FlxG.mouse.visible = false;
 		
+		Reg.live=5;
+		if(Reg.moreHealth==true){Reg.live=80;}
+		
+		if(Reg.level>Reg.maxLevel){
+			trace("level not existing yet");
+		Reg.level=Reg.maxLevel;
+		}
+
 		// Create a starfield
 		add(new FlxStarField2D());
+		
+		_walls = new FlxGroup();
+		
+		_leftWall = new FlxSprite(0, 0);
+		_leftWall.makeGraphic(3, 240, FlxColor.GRAY);
+		_leftWall.immovable = true;
+		_walls.add(_leftWall);
+		
+		_rightWall = new FlxSprite(317, 0);
+		_rightWall.makeGraphic(3, 240, FlxColor.GRAY);
+		_rightWall.immovable = true;
+		_walls.add(_rightWall);
+		
+		_topWall = new FlxSprite(0, 0);
+		_topWall.makeGraphic(320, 3, FlxColor.GRAY);
+		_topWall.immovable = true;
+		_walls.add(_topWall);
+		
+		_bottomWall = new FlxSprite(0, 237);
+		_bottomWall.makeGraphic(320, 3, FlxColor.TRANSPARENT);
+		_bottomWall.immovable = true;
+		_walls.add(_bottomWall);
+		
+		
 		
 		// Spawn 3 asteroids for a start
 		asteroids = new FlxTypedGroup<Asteroid>();
@@ -67,7 +109,8 @@ class PlayState extends FlxState
 		bullets = new FlxTypedGroup<FlxSprite>(numBullets);
 
 		var sprite:FlxSprite;
-
+		var colorArray:Array<Dynamic> = [0xffff9024,0xffff9024,0xff10FF24];
+		
 		for (i in 0...numBullets)
 		{
 			sprite = new FlxSprite( -100, -100);
@@ -76,7 +119,7 @@ class PlayState extends FlxState
 			sprite.height = 10;
 			sprite.offset.set( -1, -4);
 			sprite.exists = false;
-			sprite.color =0xffff9024;
+			sprite.color =colorArray[Reg.gun];
 			bullets.add(sprite);
 		}
 		
@@ -87,7 +130,7 @@ class PlayState extends FlxState
 		
 		add(bullets);
 		
-		pauseButton =  new FlxButton((FlxG.width /2)-20 , FlxG.height-15, "Pause", pauseMode);
+		pauseButton =  new FlxButton((FlxG.width /2)-20 , FlxG.height-15, "Exit Level", pauseMode);
 		add(pauseButton);
 
 		virtualPad = new FlxVirtualPad(FULL, A);
@@ -97,6 +140,20 @@ class PlayState extends FlxState
 		if(Reg.music==true){FlxG.sound.playMusic("assets/music/background_1.ogg",true);}
 	
 		pause=false;		
+		
+		_health = new FlxText(0, 0, FlxG.width);
+		_health.setFormat(null, 10, FlxColor.GREEN, "left", FlxText.BORDER_OUTLINE, 0x131c1b);
+		_health.scrollFactor.set(0, 0);
+		add(_health);
+		
+		_pos = new FlxText(0, (FlxG.height-35), FlxG.width);
+		_pos.setFormat(null, 5, FlxColor.GREEN, "left", FlxText.BORDER_OUTLINE, 0x131c1b);
+			
+		if(Reg.debug==true){
+			_pos.scrollFactor.set(0, 0);
+			add(_pos);
+		}
+		
 
 	}
 	
@@ -111,6 +168,11 @@ class PlayState extends FlxState
 	
 	override public function update():Void 
 	{
+		
+		_pos.text="x: "+Std.string(_playerShip.x)+"\ny:"+Std.string(_playerShip.y)+"\nL:"+Std.string(Reg.level)+"\nG:"+Std.string(Reg.gun)+"\nm:"+Std.string(Reg.maxLevel);
+
+		_health.text=Reg.live+ " health";
+		
 		// Escape to the menu
 		if (FlxG.keys.pressed.ESCAPE)
 		{
@@ -124,6 +186,9 @@ class PlayState extends FlxState
 		{
 			if (FlxG.keys.pressed.R || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED || FlxG.mouse.justPressed)
 			{
+				Reg.moreHealth=false;
+				Reg.gun=1;
+				Reg.level=1;
 				FlxG.resetState();
 			}
 
@@ -133,7 +198,8 @@ class PlayState extends FlxState
 		FlxG.overlap(bullets, asteroids, bulletHitsAsteroid);
 		FlxG.overlap(asteroids, _playerShip, asteroidHitsShip);
 		FlxG.collide(asteroids);
-		
+		FlxG.collide(_walls, bullets,destroyBullet);
+			
 		for (bullet in bullets.members)
 		{
 			if (bullet.exists)
@@ -143,6 +209,11 @@ class PlayState extends FlxState
 		}
 }
 	
+	private function destroyBullet(Wall:FlxObject, Bullet:FlxObject):Void
+	{
+		trace("bullet wall");
+		Bullet.kill();
+	}
 	private function increaseScore(Amount:Int = 10):Void
 	{
 		_score += Amount;
@@ -214,7 +285,7 @@ private function pauseMenu():Void
 	{
 		trace("openDebug");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		FlxG.switchState(new DebugState());
+		FlxG.switchState(new MenuState());
 	}
 		
 }

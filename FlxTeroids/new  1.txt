@@ -1,0 +1,5 @@
+Reg.debug=debug overlay
+Reg.gun=2; //def 1
+
+Reg.moreHealth=80//def 5
+Reg.level=2 //def 1

@@ -36,7 +36,7 @@ private var _sound:FlxText;
 		t.setFormat(null, 16, FlxColor.WHITE, "center", FlxText.BORDER_OUTLINE);
 		add(t);
 		
-		DemoButton1 =  new FlxButton((FlxG.width /2)-30 , (FlxG.height/4)*3, "Sound on/off", toggleSound);
+		DemoButton1 =  new FlxButton((FlxG.width /2)-30, (FlxG.height/4)*3, "Sound on/off", toggleSound);
 		add(DemoButton1);
 		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Apply", closeMenu);
 		add(DemoButton2);
@@ -89,7 +89,7 @@ private function toggleSound():Void
 	}
 		private function toggleMusic():Void
 	{
-		trace(toggleMusic);
+		trace("toggleMusic");
 	if(Reg.music==true){Reg.music=false;}
 	else{Reg.music=true;}
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
@@ -97,14 +97,14 @@ private function toggleSound():Void
 	}
 		private function enableDebug():Void
 	{
-		trace(enableDebug);
+		trace("enableDebug");
 		if(Reg.debug==false){Reg.debug=true;}
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
 	
 	}
 		private function menuDebug():Void
 	{
-		trace(menuDebug);
+		trace("menuDebug");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
 		FlxG.switchState(new DebugState());
 	}

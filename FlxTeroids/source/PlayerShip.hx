@@ -55,9 +55,14 @@ class PlayerShip extends FlxSprite
 			bullet.reset(x + (width - bullet.width) / 2, y + (height - bullet.height) / 2);
 			bullet.angle = angle;
 			FlxAngle.rotatePoint(150, 0, 0, 0, bullet.angle, bullet.velocity);
-			bullet.velocity.x *= 2;
-			bullet.velocity.y *= 2;
-			if(Reg.sound==true){FlxG.sound.play("assets/sfx/_gun.wav", 1, false);}	//123
+			bullet.velocity.x *= 2;//(Reg.gun/2);
+			bullet.velocity.y *= 2;//(Reg.gun/2);
+			if(Reg.gun==2){
+			bullet.velocity.x *= 5;
+			bullet.velocity.y *= 5;
+			}
+			if(Reg.sound==true){FlxG.sound.play("assets/sfx/_gun"+Std.string(Reg.gun)+".wav", 1, false);}	//123
+			
 		}
 		
 		FlxSpriteUtil.screenWrap(this);

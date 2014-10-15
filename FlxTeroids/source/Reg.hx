@@ -42,6 +42,7 @@ class Reg
 	public static var moreHealth=false;
 	public static var sound=true;
 	public static var music=true;
+	public static var gun:Int=1;
 	
 	/**
 	 * Generic container for a <code>FlxSave</code>. You might want to 
