@@ -169,6 +169,22 @@ class PlayState extends FlxState
 	override public function update():Void 
 	{
 		
+		if((_score>=300)&&(_score<600)){Reg.level=2;}
+		if((_score>=600)&&(_score<900)){Reg.level=3;}
+		if((_score>=900)&&(_score<1200)){Reg.level=4;}
+		if((_score>=1200)&&(_score<1500)){Reg.level=5;}
+		if((_score>=1500)&&(_score<1800)){Reg.level=6;}
+		if((_score>=1800)&&(_score<2100)){Reg.level=7;}
+		if((_score>=2100)&&(_score<2400)){Reg.level=8;}
+		if((_score>=2400)&&(_score<2700)){Reg.level=9;}
+		if((_score>=2700)&&(_score<3000)){Reg.level=10;}
+		
+		if(_score>=500){Reg.gun=2;}
+		
+		//if(_score>800){Reg.level=3;}
+		//if(_score>1000){Reg.gun=2;}
+		
+		
 		_pos.text="x: "+Std.string(_playerShip.x)+"\ny:"+Std.string(_playerShip.y)+"\nL:"+Std.string(Reg.level)+"\nG:"+Std.string(Reg.gun)+"\nm:"+Std.string(Reg.maxLevel);
 
 		_health.text=Reg.live+ " health";
@@ -219,7 +235,7 @@ class PlayState extends FlxState
 	private function increaseScore(Amount:Int = 10):Void
 	{
 		_score += Amount;
-		_scoreText.text = "Score: " + _score;
+		_scoreText.text = "Score: " + _score+" Level "+Std,string(Reg.level+1)+" at "+Std.string((300*reg.level)-_score)+" more. new gun at "+Std.string((500-_score))+" more";
 		_scoreText.alpha = 0;
 		FlxTween.tween(_scoreText, { alpha: 1 }, 0.5);
 	}
@@ -240,9 +256,9 @@ class PlayState extends FlxState
 			
 			Object1.kill();
 			Reg.live--;
-			bullets.kill();
 			if(Reg.live<0){Reg.live=0;}
 			if(Reg.live==0){
+			bullets.kill();
 				Object2.kill();
 				_scoreText.text = "Game Over! Final score: " + _score + " - Click Screen to retry.";
 			}

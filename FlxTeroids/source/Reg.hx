@@ -21,7 +21,7 @@ class Reg
 	 * Example usage: Storing the current level number.
 	 */
 	public static var level:Int =1;
-	public static var maxLevel:Int =3;//1=tutorial, 2=normal level
+	public static var maxLevel:Int =10;//1=tutorial, 2=normal level
 	/**
 	 * Generic scores Array that can be used for cross-state stuff.
 	 * Example usage: Storing the scores for level.
