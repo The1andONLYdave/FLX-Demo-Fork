@@ -49,6 +49,12 @@ class PlayerShip extends FlxSprite
 			FlxAngle.rotatePoint(90, 0, 0, 0, angle, acceleration);
 		}
 		
+		if (FlxG.keys.anyPressed(["S", "DOWN"]) || PlayState.virtualPad.buttonDown.status == FlxButton.PRESSED)
+		{
+			velocity.y=0;
+			velocity.x=0;
+		}
+		
 		if (FlxG.keys.justPressed.SPACE || PlayState.virtualPad.buttonA.status == FlxButton.PRESSED)
 		{
 			var bullet:FlxSprite = PlayState.bullets.recycle();
@@ -69,4 +75,5 @@ class PlayerShip extends FlxSprite
 		
 		super.update();
 	}
+
 }

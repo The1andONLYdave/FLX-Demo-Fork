@@ -45,7 +45,7 @@ class PlayState extends FlxState
 	private var _rightWall:FlxSprite;
 	private var _topWall:FlxSprite;
 	private var _bottomWall:FlxSprite;
-
+	public var _cooldown:Float;
 	
 	override public function create():Void 
 	{
@@ -180,7 +180,7 @@ class PlayState extends FlxState
 		}
 
 		super.update();
-		
+		_cooldown += FlxG.elapsed;
 		// Don't continue in case we lost
 		if (!_playerShip.alive)
 		{
@@ -189,7 +189,7 @@ class PlayState extends FlxState
 				Reg.moreHealth=false;
 				Reg.gun=1;
 				Reg.level=1;
-				FlxG.resetState();
+				if(_cooldown>1.0){FlxG.resetState();}
 			}
 
 			return;
@@ -207,6 +207,8 @@ class PlayState extends FlxState
 				FlxSpriteUtil.screenWrap(bullet);
 			}
 		}
+		
+		
 }
 	
 	private function destroyBullet(Wall:FlxObject, Bullet:FlxObject):Void
@@ -231,15 +233,30 @@ class PlayState extends FlxState
 	
 	private function asteroidHitsShip(Object1:FlxObject, Object2:FlxObject):Void
 	{
-		Object1.kill();
-		Object2.kill();
-		bullets.kill();
-		_scoreText.text = "Game Over! Final score: " + _score + " - Click Screen to retry.";
+		
+		//start timer for 3 seconds
+		//if timer expired continue, else break
+		if(_cooldown> 1.0){ //3 sekunden
+			
+			Object1.kill();
+			Reg.live--;
+			bullets.kill();
+			if(Reg.live<0){Reg.live=0;}
+			if(Reg.live==0){
+				Object2.kill();
+				_scoreText.text = "Game Over! Final score: " + _score + " - Click Screen to retry.";
+			}
+			if(Reg.live>0){
+				//_health.flicker(1); //flicker for 1 second and dont null while flickering
+				
+			}
+			_cooldown=0;
+		}
 	}
 	
 	private function resetTimer(Timer:FlxTimer):Void
 	{
-		Timer.start(5, resetTimer);
+		Timer.start((5*Reg.level), resetTimer);
 		spawnAsteroid();
 	}
 	

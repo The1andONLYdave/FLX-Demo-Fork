@@ -36,7 +36,7 @@ private var _sound:FlxText;
 		t.setFormat(null, 16, FlxColor.WHITE, "center", FlxText.BORDER_OUTLINE);
 		add(t);
 		
-		DemoButton1 =  new FlxButton((FlxG.width /2)-30, (FlxG.height/4)*3, "Sound on/off", toggleSound);
+			DemoButton1 =  new FlxButton(((FlxG.width /4)*1 )-30 , (FlxG.height/4)*3, "Sound on/off", toggleSound);
 		add(DemoButton1);
 		DemoButton2 =  new FlxButton(((FlxG.width /4)*3 )-30, FlxG.height/2, "Apply", closeMenu);
 		add(DemoButton2);

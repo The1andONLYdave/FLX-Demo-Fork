@@ -3,3 +3,13 @@ Reg.gun=2; //def 1
 
 Reg.moreHealth=80//def 5
 Reg.level=2 //def 1
+
+
+bullets don't fly enough right
+option show no toogle sound button
+health != checked on collission
+
+need 2 timer:
+one after live==0 for dont clicking gameover away too early
+one after AsteroidHitsShip for don't do damage every second
+maybe with flickering ship
