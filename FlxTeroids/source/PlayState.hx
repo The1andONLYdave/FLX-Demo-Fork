@@ -94,7 +94,7 @@ class PlayState extends FlxState
 		virtualPad.setAll("alpha", 0.5);
 		add(virtualPad);	 //add last  = foreground
 
-		FlxG.sound.playMusic("assets/music/background_1.ogg",true); //true enable looping
+		if(Reg.music==true){FlxG.sound.playMusic("assets/music/background_1.ogg",true);}
 	
 		pause=false;		
 

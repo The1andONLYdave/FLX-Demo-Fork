@@ -58,13 +58,13 @@ public var DemoButton3:FlxButton;
 	{
 		trace("closeDebug2");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		FlxG.switchState(new PlayState2());
+		FlxG.switchState(new PlayState());
 	}
 		private function closeDebug3():Void
 	{
 		trace("closeDebug3");
 		//GAnalytics.trackEvent("Game", "PauseMenu", "starting", 1);
-		FlxG.switchState(new PlayState3());
+		FlxG.switchState(new PlayState());
 	}
 	
 }
